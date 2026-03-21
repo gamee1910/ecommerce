@@ -1,9 +1,8 @@
-package com.ecommerce.serivce.user.token;
-
-import lombok.*;
+package com.ecommerce.serivce.user.features.token;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Setter

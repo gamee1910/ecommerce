@@ -25,7 +25,8 @@ app:
     secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production-please}
     access-token-expiry: ${JWT_ACCESS_TOKEN_EXPIRY:900000}      # 15m
     refresh-token-expiry: ${JWT_REFRESH_TOKEN_EXPIRY:604800000} # 7d
-
+  cookie:
+    secure: false
 management:
   endpoints:
     web:

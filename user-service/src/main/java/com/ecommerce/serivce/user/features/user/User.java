@@ -1,9 +1,8 @@
-package com.ecommerce.serivce.user.user;
-
-import lombok.*;
+package com.ecommerce.serivce.user.features.user;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Setter
@@ -31,8 +30,7 @@ public class User {
     private Instant updatedAt;
 
     public enum Role {
-        USER, ADMIN
+        USER,
+        ADMIN
     }
 }
-
-
