@@ -77,16 +77,3 @@ Flyway migrations are located in each service under:
 | order.created     | order-service | notification-service |
 | order.created.DLT | Kafka (auto)  | notification-service |
 | user.registered   | user-service  | notification-service |
-
-## Weekly Progress
-
-- [x] Week 1 — Docker Compose + DB schemas
-- [ ] Week 2 — User Service (OAuth2 + JWT)
-- [ ] Week 3 — API Gateway (routing + auth filter)
-- [ ] Week 4 — API Gateway (rate limit + resilience)
-- [ ] Week 5 — Product Service (CRUD + cache)
-- [ ] Week 6 — Product Service (DB performance)
-- [ ] Week 7 — Order Service + Kafka producer
-- [ ] Week 8 — Notification Service (Kafka consumer)
-- [ ] Week 9 — Observability (Prometheus + Grafana)
-- [ ] Week 10 — Load test (k6) + final tuning
