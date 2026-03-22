@@ -1,0 +1,17 @@
+info:
+  name: info
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:8081/api/v1/users/info
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YzQ2MWI1ZS1mYzVlLTQyZmQtYjkyNC01ODNiNTlkMDFhZWIiLCJlbWFpbCI6ImhoaGF1MTkxMEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc3NDE2NTM5NSwiZXhwIjoxNzc0MTY2Mjk1fQ.3YgkZCrX-CvwSsWwwdtFlwTPEsvmzlDkrZO0vfdCqW8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

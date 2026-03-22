@@ -6,15 +6,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,6 +63,7 @@ public class AuthController {
             authService.revokeRefreshToken(refreshToken);
         }
         clearRefreshTokenCookie(response);
+        SecurityContextHolder.clearContext();
         return ResponseEntity.noContent().build();
     }
 
@@ -68,7 +71,7 @@ public class AuthController {
         response.addHeader(
                 "Set-Cookie",
                 String.format(
-                        "%s=%s; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth/refesh; Max-Age=%d",
+                        "%s=%s; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth/refresh; Max-Age=%d",
                         REFRESH_TOKEN_COOKIE, token, refreshTokenExpiry / 1000));
     }
 

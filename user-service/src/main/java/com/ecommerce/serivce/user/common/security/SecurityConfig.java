@@ -26,7 +26,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                "/api/v1/auth/**", "/actuator/health", "/v3/api-docs", "/swagger-ui.html")
+                                "/api/v1/auth/**", "/actuator/health")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

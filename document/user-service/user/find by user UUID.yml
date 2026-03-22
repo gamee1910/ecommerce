@@ -1,0 +1,17 @@
+info:
+  name: find by user UUID
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: http://localhost:8081/api/v1/users/8c461b5e-fc5e-42fd-b924-583b59d01aeb
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YzQ2MWI1ZS1mYzVlLTQyZmQtYjkyNC01ODNiNTlkMDFhZWIiLCJlbWFpbCI6ImhoaGF1MTkxMEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc3NDE2NTM5NSwiZXhwIjoxNzc0MTY2Mjk1fQ.3YgkZCrX-CvwSsWwwdtFlwTPEsvmzlDkrZO0vfdCqW8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
