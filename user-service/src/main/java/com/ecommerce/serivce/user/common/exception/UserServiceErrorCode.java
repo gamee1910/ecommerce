@@ -13,6 +13,7 @@ public enum UserServiceErrorCode {
     ACCOUNT_DISABLED(HttpStatus.FORBIDDEN, "AUTH_004", "Account is disabled"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_001", "User not found"),
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "CMN_001", "Validation failed"),
+    FORBIDDEN(HttpStatus.NOT_ACCEPTABLE, "CMN_002", "Forbidden"),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CMN_999", "Internal server error");
 
     private final HttpStatus httpStatus;
