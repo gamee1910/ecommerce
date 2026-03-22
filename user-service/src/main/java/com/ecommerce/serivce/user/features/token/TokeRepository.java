@@ -11,10 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class OAuthTokeRepository {
+public class TokeRepository {
     private final JdbcClient jdbcClient;
 
     private static final String FIND_BY_TOKEN_HASH_SQL = "SELECT * FROM oauth_tokens WHERE token_hash = :token_hash";
+
     private static final String SAVE_OAUTH_TOKEN_SQL =
             """
                     INSERT INTO oauth_tokens(user_id, token_hash, device_info, expires_at, revoked)
@@ -25,7 +26,7 @@ public class OAuthTokeRepository {
     private static final String REVOKED_ALL_TOKEN_BY_USER_ID_SQL =
             "UPDATE oauth_tokens SET revoked = true WHERE user_id = :userId";
 
-    public Optional<OAuthToken> findByTokenHash(String token) {
+    public Optional<Token> findByTokenHash(String token) {
         return jdbcClient
                 .sql(FIND_BY_TOKEN_HASH_SQL)
                 .param("token_hash", token)
@@ -33,7 +34,7 @@ public class OAuthTokeRepository {
                 .optional();
     }
 
-    public OAuthToken save(OAuthToken token) {
+    public void save(Token token) {
         jdbcClient
                 .sql(SAVE_OAUTH_TOKEN_SQL)
                 .param("userId", token.getUserId())
@@ -42,15 +43,14 @@ public class OAuthTokeRepository {
                 .param("expiresAt", TimeUtils.toDb(token.getExpiresAt()))
                 .param("revoked", token.isRevoked())
                 .update();
-        return token;
     }
 
     public void revokedAllTokenByUserId(UUID userId) {
         jdbcClient.sql(REVOKED_ALL_TOKEN_BY_USER_ID_SQL).param("userId", userId).update();
     }
 
-    private OAuthToken mapRow(ResultSet rs, int row) throws SQLException {
-        return OAuthToken.builder()
+    private Token mapRow(ResultSet rs, int row) throws SQLException {
+        return Token.builder()
                 .id(UUID.fromString(rs.getString("id")))
                 .userId(UUID.fromString(rs.getString("user_id")))
                 .tokenHash(rs.getString("token_hash"))

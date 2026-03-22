@@ -72,9 +72,8 @@ public class AuthController {
                         REFRESH_TOKEN_COOKIE, token, refreshTokenExpiry / 1000));
     }
 
-    private void clearRefreshTokenCookie
+    private void clearRefreshTokenCookie(HttpServletResponse response) {
 
-            (HttpServletResponse response) {
         response.addHeader(
                 "Set-Cookie",
                 String.format(

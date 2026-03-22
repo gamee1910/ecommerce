@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j(topic = "JWT Service")
-public class JwtService {
+public class TokenService {
 
     private final SecretKey secretKey;
 
@@ -25,7 +25,7 @@ public class JwtService {
 
     private final long refreshTokenExpiry;
 
-    public JwtService(
+    public TokenService(
             @Value("${app.jwt.secret}") String secretKey,
             @Value("${app.jwt.access-token-expiry}") long accessTokenExpiry,
             @Value("${app.jwt.refresh-token-expiry}") long refreshTokenExpiry) {

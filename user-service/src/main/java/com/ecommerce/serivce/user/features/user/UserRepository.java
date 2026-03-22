@@ -18,8 +18,11 @@ public class UserRepository {
     private final JdbcClient jdbcClient;
 
     private static final String FIND_BY_ID_SQL = "SELECT * FROM users WHERE id = :id";
+
     private static final String FIND_BY_EMAIL_SQL = "SELECT * FROM users WHERE email = :email";
+
     private static final String EXSIST_BY_EMAIL_SQL = "SELECT COUNT(1) FROM users WHERE email = :email";
+
     private static final String INSERT_USER_SQL =
             """
                     INSERT INTO users(email, password, full_name, role, is_active)
@@ -29,7 +32,7 @@ public class UserRepository {
     private static final String UPDATE_USER_SQL =
             """
                     UPDATE users
-                    SET email = :email, full_name = :fullName, is_active = :isActive, updated_at = NOW()
+                    SET full_name = :fullName, is_active = :isActive, updated_at = NOW()
                     WHERE id = :id
                     """;
 
@@ -49,7 +52,7 @@ public class UserRepository {
                 .optional();
     }
 
-    public boolean exsitsByEmail(String email) {
+    public boolean existsByEmail(String email) {
         Integer count = jdbcClient
                 .sql(EXSIST_BY_EMAIL_SQL)
                 .param("email", email)
@@ -63,7 +66,7 @@ public class UserRepository {
         return update(user);
     }
 
-    public User insert(User user) {
+    private User insert(User user) {
         var keyHolder = new GeneratedKeyHolder();
         jdbcClient
                 .sql(INSERT_USER_SQL)
@@ -83,7 +86,6 @@ public class UserRepository {
         jdbcClient
                 .sql(UPDATE_USER_SQL)
                 .param("id", user.getId())
-                .param("email", user.getEmail())
                 .param("fullName", user.getFullName())
                 .param("isActive", user.isActive())
                 .update();

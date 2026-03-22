@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OAuthToken {
+public class Token {
     private UUID id;
 
     private UUID userId;

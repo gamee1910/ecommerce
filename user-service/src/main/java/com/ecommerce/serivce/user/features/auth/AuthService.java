@@ -4,9 +4,9 @@ import com.ecommerce.serivce.user.common.dto.request.AuthRequest;
 import com.ecommerce.serivce.user.common.dto.response.AuthResponse;
 import com.ecommerce.serivce.user.common.exception.UserServiceErrorCode;
 import com.ecommerce.serivce.user.common.exception.UserServiceException;
-import com.ecommerce.serivce.user.features.token.JwtService;
-import com.ecommerce.serivce.user.features.token.OAuthTokeRepository;
-import com.ecommerce.serivce.user.features.token.OAuthToken;
+import com.ecommerce.serivce.user.features.token.TokeRepository;
+import com.ecommerce.serivce.user.features.token.Token;
+import com.ecommerce.serivce.user.features.token.TokenService;
 import com.ecommerce.serivce.user.features.user.User;
 import com.ecommerce.serivce.user.features.user.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -15,7 +15,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,13 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j(topic = "Auth Service")
 public class AuthService {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
-    private final OAuthTokeRepository tokeRepository;
+    private final TokenService tokenService;
+    private final TokeRepository tokeRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public AuthResponse.TokenPair register(AuthRequest.Register request) {
-        if (userRepository.exsitsByEmail(request.email())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new UserServiceException(UserServiceErrorCode.EMAIL_ALREADY_EXIST);
         }
 
@@ -63,17 +62,17 @@ public class AuthService {
 
     @Transactional
     public AuthResponse.TokenPair refresh(AuthRequest.RefreshToken request) {
-        if (!jwtService.isValid(request.token())) {
+        if (!tokenService.isValid(request.token())) {
             throw new UserServiceException(UserServiceErrorCode.INVALID_TOKEN);
         }
 
-        Claims claims = jwtService.validateAndExtract(request.token());
+        Claims claims = tokenService.validateAndExtract(request.token());
 
         if (!"refresh".equals(claims.get("type"))) {
             throw new UserServiceException(UserServiceErrorCode.INVALID_TOKEN);
         }
 
-        OAuthToken stored = tokeRepository
+        Token stored = tokeRepository
                 .findByTokenHash(hash(request.token()))
                 .orElseThrow(() -> new UserServiceException(UserServiceErrorCode.INVALID_TOKEN));
 
@@ -93,11 +92,6 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(UUID userId) {
-        tokeRepository.revokedAllTokenByUserId(userId);
-    }
-
-    @Transactional
     public void revokeRefreshToken(String rawToken) {
         if (rawToken == null) return;
         tokeRepository.findByTokenHash(hash(rawToken)).ifPresent(token -> {
@@ -107,18 +101,18 @@ public class AuthService {
     }
 
     private AuthResponse.TokenPair issueTokenPair(User user) {
-        String accessToken = jwtService.generateAccessToken(
+        String accessToken = tokenService.generateAccessToken(
                 user.getId(), user.getEmail(), user.getRole().name());
 
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
+        String refreshToken = tokenService.generateRefreshToken(user.getId());
 
-        tokeRepository.save(OAuthToken.builder()
+        tokeRepository.save(Token.builder()
                 .userId(user.getId())
-                .expiresAt(Instant.now().plusMillis(jwtService.getAccessTokenExpiry() * 48))
+                .expiresAt(Instant.now().plusMillis(tokenService.getAccessTokenExpiry() * 48))
                 .tokenHash(hash(refreshToken))
                 .build());
 
-        return new AuthResponse.TokenPair(accessToken, refreshToken, jwtService.getAccessTokenExpiry());
+        return new AuthResponse.TokenPair(accessToken, refreshToken, tokenService.getAccessTokenExpiry());
     }
 
     private String hash(String value) {
