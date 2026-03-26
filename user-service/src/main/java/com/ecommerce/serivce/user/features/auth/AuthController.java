@@ -71,7 +71,7 @@ public class AuthController {
         response.addHeader(
                 "Set-Cookie",
                 String.format(
-                        "%s=%s; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth/refresh; Max-Age=%d",
+                        "%s=%s; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth; Max-Age=%d",
                         REFRESH_TOKEN_COOKIE, token, refreshTokenExpiry / 1000));
     }
 
@@ -80,7 +80,7 @@ public class AuthController {
         response.addHeader(
                 "Set-Cookie",
                 String.format(
-                        "%s=; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth/refresh; Max-Age=0",
+                        "%s=; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth; Max-Age=0",
                         REFRESH_TOKEN_COOKIE));
     }
 

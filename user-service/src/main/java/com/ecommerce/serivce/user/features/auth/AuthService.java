@@ -108,7 +108,7 @@ public class AuthService {
 
         tokeRepository.save(Token.builder()
                 .userId(user.getId())
-                .expiresAt(Instant.now().plusMillis(tokenService.getAccessTokenExpiry() * 48))
+                .expiresAt(Instant.now().plusMillis(tokenService.getAccessTokenExpiry()))
                 .tokenHash(hash(refreshToken))
                 .build());
 
