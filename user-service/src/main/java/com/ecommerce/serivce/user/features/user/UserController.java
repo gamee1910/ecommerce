@@ -3,12 +3,11 @@ package com.ecommerce.serivce.user.features.user;
 import com.ecommerce.serivce.user.common.dto.request.UserRequest;
 import com.ecommerce.serivce.user.common.dto.response.UserResponse;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,8 +36,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.name")
     public ResponseEntity<UserResponse.UserProfile> update(
-            @PathVariable UUID userId,
-            @Valid @RequestBody UserRequest.Update request) {
+            @PathVariable UUID userId, @Valid @RequestBody UserRequest.Update request) {
         return ResponseEntity.ok(userService.update(userId, request));
     }
 }

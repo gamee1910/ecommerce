@@ -1,7 +1,6 @@
 package com.ecommerce.serivce.user.common.dto.response;
 
 import com.ecommerce.serivce.user.features.user.User;
-
 import java.util.UUID;
 
 public class UserResponse {
@@ -10,6 +9,4 @@ public class UserResponse {
             return new UserProfile(user.getId(), user.getEmail(), user.getFullName(), user.getRole());
         }
     }
-
-
 }

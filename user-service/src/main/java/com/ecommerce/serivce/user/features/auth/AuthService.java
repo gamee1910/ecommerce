@@ -12,17 +12,16 @@ import com.ecommerce.serivce.user.features.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +51,8 @@ public class AuthService {
 
     @Transactional
     public AuthResponse.TokenPair login(AuthRequest.Login request) {
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository
+                .findByEmail(request.email())
                 .orElseThrow(() -> new UserServiceException(UserServiceErrorCode.INVALID_CREDENTIALS));
 
         if (!user.isActive()) {
@@ -80,7 +80,8 @@ public class AuthService {
             throw new UserServiceException(UserServiceErrorCode.INVALID_TOKEN);
         }
 
-        Token stored = tokenRepository.findByTokenHash(hash(request.token()))
+        Token stored = tokenRepository
+                .findByTokenHash(hash(request.token()))
                 .orElseThrow(() -> new UserServiceException(UserServiceErrorCode.INVALID_TOKEN));
 
         if (stored.isRevoked() || stored.getExpiresAt().isBefore(Instant.now())) {
@@ -97,14 +98,16 @@ public class AuthService {
     @Transactional
     public void revokeRefreshToken(String rawToken) {
         if (rawToken == null) return;
-        tokenRepository.findByTokenHash(hash(rawToken)).ifPresentOrElse(
-                token -> {
-                    token.setRevoked(true);
-                    tokenRepository.save(token);
-                    log.info("Revoked token for user {}", token.getUser().getId());
-                },
-                () -> log.warn("Attempted to revoke unknown token")
-        );
+        tokenRepository
+                .findByTokenHash(hash(rawToken))
+                .ifPresentOrElse(
+                        token -> {
+                            token.setRevoked(true);
+                            tokenRepository.save(token);
+                            log.info(
+                                    "Revoked token for user {}", token.getUser().getId());
+                        },
+                        () -> log.warn("Attempted to revoke unknown token"));
     }
 
     private AuthResponse.TokenPair issueTokenPair(User user) {
@@ -123,8 +126,7 @@ public class AuthService {
 
     private String hash(String value) {
         try {
-            byte[] bytes = MessageDigest.getInstance("SHA-256")
-                    .digest(value.getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 not available", e);

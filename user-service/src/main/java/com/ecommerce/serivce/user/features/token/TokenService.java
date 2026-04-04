@@ -5,17 +5,16 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import javax.crypto.SecretKey;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j(topic = "JWT Service")
@@ -31,6 +30,7 @@ public class TokenService {
 
     @Getter
     private final long accessTokenExpiry;
+
     @Getter
     private final long refreshTokenExpiry;
 
@@ -93,6 +93,8 @@ public class TokenService {
     }
 
     public enum ValidationResult {
-        VALID, EXPIRED, INVALID
+        VALID,
+        EXPIRED,
+        INVALID
     }
 }

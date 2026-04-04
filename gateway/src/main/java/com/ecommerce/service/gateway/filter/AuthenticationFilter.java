@@ -4,6 +4,8 @@ import com.ecommerce.service.gateway.config.TokenVerifier;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -19,9 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j(topic = "Authentication Filter")
@@ -29,14 +28,11 @@ public class AuthenticationFilter implements GatewayFilter, Ordered {
 
     private final TokenVerifier tokenVerifier;
 
-    private static final List<String> PUBLIC_PATHS = List.of(
-            "/api/v1/auth/"
-    );
+    private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/");
 
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String USER_ROLE_HEADER = "X-User-Role";
     private static final String USER_EMAIL_HEADER = "X-User-Email";
-
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -46,9 +42,7 @@ public class AuthenticationFilter implements GatewayFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String authHeader = exchange.getRequest()
-                .getHeaders()
-                .getFirst(HttpHeaders.AUTHORIZATION);
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return unauthorized(exchange, "Missing or invalid Authorization header");
@@ -63,7 +57,8 @@ public class AuthenticationFilter implements GatewayFilter, Ordered {
                 return unauthorized(exchange, "Refresh token not allowed");
             }
 
-            ServerHttpRequest mutated = exchange.getRequest().mutate()
+            ServerHttpRequest mutated = exchange.getRequest()
+                    .mutate()
                     .header(USER_ID_HEADER, claims.getSubject())
                     .header(USER_ROLE_HEADER, claims.get("role", String.class))
                     .header(USER_EMAIL_HEADER, claims.get("email", String.class))
@@ -98,8 +93,7 @@ public class AuthenticationFilter implements GatewayFilter, Ordered {
                 {"status": 401, "error": "%s"}
                 """.formatted(message);
 
-        DataBuffer buffer = response.bufferFactory()
-                .wrap(body.getBytes(StandardCharsets.UTF_8));
+        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
 
         return response.writeWith(Mono.just(buffer));
     }
