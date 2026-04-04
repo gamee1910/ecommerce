@@ -11,6 +11,7 @@ public enum UserServiceErrorCode {
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_002", "Invalid email or password"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_003", "Token is invalid or expired"),
     ACCOUNT_DISABLED(HttpStatus.FORBIDDEN, "AUTH_004", "Account is disabled"),
+    EXPIRED_TOKEN(HttpStatus.CONFLICT, "AUTH_005", "Token expired"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_001", "User not found"),
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "CMN_001", "Validation failed"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "CMN_002", "Forbidden"),
