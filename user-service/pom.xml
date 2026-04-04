@@ -124,7 +124,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
@@ -157,11 +156,10 @@
                 <version>2.43.0</version>
                 <configuration>
                     <java>
-                        <palantirJavaFormat>
-                            <version>2.39.0</version>
-                            <style>PALANTIR</style>
-                            <formatJavadoc>false</formatJavadoc>
-                        </palantirJavaFormat>
+                        <googleJavaFormat>
+                            <version>1.19.1</version>
+                            <style>GOOGLE</style>
+                        </googleJavaFormat>
                     </java>
                 </configuration>
             </plugin>

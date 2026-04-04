@@ -1,8 +1,8 @@
 package com.ecommerce.serivce.user.common.security;
 
 import com.ecommerce.serivce.user.features.token.TokenService;
+import com.ecommerce.serivce.user.features.token.TokenService.ValidationResult;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,50 +24,59 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 @Slf4j(topic = "JwtAuthentication Filter")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final TokenService tokenService;
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
+  private final TokenService tokenService;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+  @Override
+  protected void doFilterInternal(
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain)
+      throws ServletException, IOException {
 
-        final String token = authHeader.substring(7);
+    final String authHeader = request.getHeader("Authorization");
 
-        try {
-            Claims claims = tokenService.validateAndExtract(token);
-
-            // Not allowed refresh token
-            if ("refresh".equals(claims.get("type", String.class))) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token not allowed here");
-                return;
-            }
-
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                String userId = claims.getSubject();
-                String role = claims.get("role", String.class);
-
-                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
-
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }
-
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("JWT rejected: {}", e.getMessage());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
-            return;
-        }
-
-        filterChain.doFilter(request, response);
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
     }
+
+    final String token = authHeader.substring(7);
+
+    switch (tokenService.validate(token)) {
+      case ValidationResult.Expired() -> {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+        return;
+      }
+      case ValidationResult.Invalid(String reason) -> {
+        log.warn("Token rejected: {}", reason);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+        return;
+      }
+      case ValidationResult.Valid(Claims claims) -> {
+        if (tokenService.isRefreshToken(claims)) {
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token not allowed here");
+          return;
+        }
+        authenticate(claims, request);
+      }
+    }
+
+    filterChain.doFilter(request, response);
+  }
+
+  private void authenticate(Claims claims, HttpServletRequest request) {
+    if (SecurityContextHolder.getContext().getAuthentication() != null) return;
+
+    String userId = claims.getSubject();
+    String role = claims.get("role", String.class);
+
+    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+    SecurityContextHolder.getContext().setAuthentication(authToken);
+  }
 }

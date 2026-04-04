@@ -16,28 +16,28 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "oauth_tokens")
 public class Token {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(name = "token_hash", nullable = false, unique = true, length = 512)
-    private String tokenHash;
+  @Column(name = "token_hash", nullable = false, unique = true, length = 512)
+  private String tokenHash;
 
-    @Column(name = "device_info", length = 255)
-    private String deviceInfo;
+  @Column(name = "device_info")
+  private String deviceInfo;
 
-    @Column(name = "expires_at", nullable = false)
-    private Instant expiresAt;
+  @Column(name = "expires_at", nullable = false)
+  private Instant expiresAt;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean revoked = false;
+  @Column(nullable = false)
+  @Builder.Default
+  private boolean revoked = false;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
 }

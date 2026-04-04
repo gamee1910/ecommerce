@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8081/api/v1/users/info
+  url: http://localhost:8081/api/v1/users/me
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YzQ2MWI1ZS1mYzVlLTQyZmQtYjkyNC01ODNiNTlkMDFhZWIiLCJlbWFpbCI6ImhoaGF1MTkxMEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc3NDE2NTM5NSwiZXhwIjoxNzc0MTY2Mjk1fQ.3YgkZCrX-CvwSsWwwdtFlwTPEsvmzlDkrZO0vfdCqW8
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YzQ2MWI1ZS1mYzVlLTQyZmQtYjkyNC01ODNiNTlkMDFhZWIiLCJlbWFpbCI6ImhoaGF1MTkxMEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc3NTI3Njk1NiwiZXhwIjoxNzc1Mjc3ODU2fQ.7bfDRChDpt5WqeySJcjVqVLpw4SMn39cj0JGBREpy9k
 
 settings:
   encodeUrl: true

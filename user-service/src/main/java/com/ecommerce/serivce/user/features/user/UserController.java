@@ -14,29 +14,29 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse.UserProfile> getCurrentUser() {
-        return ResponseEntity.ok(userService.getCurrentUser());
-    }
+  @GetMapping("/me")
+  public ResponseEntity<UserResponse.UserProfile> getCurrentUser() {
+    return ResponseEntity.ok(userService.getCurrentUser());
+  }
 
-    @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.name")
-    public ResponseEntity<UserResponse.UserProfile> getUserById(@PathVariable UUID userId) {
-        return ResponseEntity.ok(userService.findByUserId(userId));
-    }
+  @GetMapping("/{userId}")
+  @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.name")
+  public ResponseEntity<UserResponse.UserProfile> getUserById(@PathVariable UUID userId) {
+    return ResponseEntity.ok(userService.findByUserId(userId));
+  }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse.UserProfile> getUserByEmail(@RequestParam String email) {
-        return ResponseEntity.ok(userService.findByEmail(email));
-    }
+  @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<UserResponse.UserProfile> getUserByEmail(@RequestParam String email) {
+    return ResponseEntity.ok(userService.findByEmail(email));
+  }
 
-    @PutMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.name")
-    public ResponseEntity<UserResponse.UserProfile> update(
-            @PathVariable UUID userId, @Valid @RequestBody UserRequest.Update request) {
-        return ResponseEntity.ok(userService.update(userId, request));
-    }
+  @PutMapping("/{userId}")
+  @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.name")
+  public ResponseEntity<UserResponse.UserProfile> update(
+      @PathVariable UUID userId, @Valid @RequestBody UserRequest.Update request) {
+    return ResponseEntity.ok(userService.update(userId, request));
+  }
 }

@@ -10,28 +10,28 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class RateLimiterConfig {
 
-    // Rate limit theo userId hoặc IP
-    @Bean
-    public KeyResolver userKeyResolver() {
-        return exchange -> {
-            String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
+  // Rate limit theo userId hoặc IP
+  @Bean
+  public KeyResolver userKeyResolver() {
+    return exchange -> {
+      String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
 
-            if (userId != null) {
-                return Mono.just("user: " + userId);
-            }
+      if (userId != null) {
+        return Mono.just("user: " + userId);
+      }
 
-            // Fallback: rate limit theo IP
-            InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
+      // Fallback: rate limit theo IP
+      InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
 
-            String ip = remoteAddress != null ? remoteAddress.getAddress().getHostAddress() : "unknown";
+      String ip = remoteAddress != null ? remoteAddress.getAddress().getHostAddress() : "unknown";
 
-            return Mono.just("ip: " + ip);
-        };
-    }
+      return Mono.just("ip: " + ip);
+    };
+  }
 
-    @Bean
-    public RedisRateLimiter redisRateLimiter() {
-        // replenishRate: token/s burstCapacity, max spike
-        return new RedisRateLimiter(50, 100, 1);
-    }
+  @Bean
+  public RedisRateLimiter redisRateLimiter() {
+    // replenishRate: token/s burstCapacity, max spike
+    return new RedisRateLimiter(50, 100, 1);
+  }
 }

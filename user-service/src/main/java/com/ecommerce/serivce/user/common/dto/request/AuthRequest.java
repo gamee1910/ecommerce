@@ -6,12 +6,13 @@ import jakarta.validation.constraints.Size;
 
 public class AuthRequest {
 
-    public record Register(
-            @NotBlank @Email String email,
-            @NotBlank @Size(min = 8, message = "Password must be at least 8 length characters") String password,
-            @NotBlank String fullName) {}
+  public record Register(
+      @NotBlank @Email String email,
+      @NotBlank @Size(min = 8, message = "Password must be at least 8 length characters")
+          String password,
+      @NotBlank String fullName) {}
 
-    public record Login(@NotBlank @Email String email, @NotBlank String password) {}
+  public record Login(@NotBlank @Email String email, @NotBlank String password) {}
 
-    public record RefreshToken(@NotBlank String token) {}
+  public record RefreshToken(@NotBlank String token) {}
 }

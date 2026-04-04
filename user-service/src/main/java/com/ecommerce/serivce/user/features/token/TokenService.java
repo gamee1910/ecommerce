@@ -20,81 +20,78 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "JWT Service")
 public class TokenService {
 
-    private static final String CLAIM_EMAIL = "email";
-    private static final String CLAIM_ROLE = "role";
-    private static final String CLAIM_TYPE = "type";
-    private static final String TYPE_REFRESH = "refresh";
+  private static final String CLAIM_EMAIL = "email";
+  private static final String CLAIM_ROLE = "role";
+  private static final String CLAIM_TYPE = "type";
+  private static final String TYPE_REFRESH = "refresh";
 
-    private final SecretKey secretKey;
-    private final Clock clock;
+  private final SecretKey secretKey;
+  private final Clock clock;
 
-    @Getter
-    private final long accessTokenExpiry;
+  @Getter private final long accessTokenExpiry;
 
-    @Getter
-    private final long refreshTokenExpiry;
+  @Getter private final long refreshTokenExpiry;
 
-    public TokenService(
-            @Value("${app.jwt.secret}") String secret,
-            @Value("${app.jwt.access-token-expiry}") long accessTokenExpiry,
-            @Value("${app.jwt.refresh-token-expiry}") long refreshTokenExpiry) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenExpiry = accessTokenExpiry;
-        this.refreshTokenExpiry = refreshTokenExpiry;
-        this.clock = Clock.systemUTC();
+  public TokenService(
+      @Value("${app.jwt.secret}") String secret,
+      @Value("${app.jwt.access-token-expiry}") long accessTokenExpiry,
+      @Value("${app.jwt.refresh-token-expiry}") long refreshTokenExpiry) {
+    this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    this.accessTokenExpiry = accessTokenExpiry;
+    this.refreshTokenExpiry = refreshTokenExpiry;
+    this.clock = Clock.systemUTC();
+  }
+
+  public String generateAccessToken(UUID userId, String email, String role) {
+    Instant now = clock.instant();
+    return Jwts.builder()
+        .subject(userId.toString())
+        .claim(CLAIM_EMAIL, email)
+        .claim(CLAIM_ROLE, role)
+        .issuedAt(Date.from(now))
+        .expiration(Date.from(now.plusMillis(accessTokenExpiry)))
+        .signWith(secretKey)
+        .compact();
+  }
+
+  public String generateRefreshToken(UUID userId) {
+    Instant now = clock.instant();
+    return Jwts.builder()
+        .subject(userId.toString())
+        .claim(CLAIM_TYPE, TYPE_REFRESH)
+        .issuedAt(Date.from(now))
+        .expiration(Date.from(now.plusMillis(refreshTokenExpiry)))
+        .signWith(secretKey)
+        .compact();
+  }
+
+  public Claims validateAndExtract(String token) {
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+  }
+
+  public boolean isRefreshToken(Claims claims) {
+    return TYPE_REFRESH.equals(claims.get(CLAIM_TYPE, String.class));
+  }
+
+  public sealed interface ValidationResult
+      permits ValidationResult.Valid, ValidationResult.Expired, ValidationResult.Invalid {
+    record Valid(Claims claims) implements ValidationResult {}
+
+    record Expired() implements ValidationResult {}
+
+    record Invalid(String reason) implements ValidationResult {}
+  }
+
+  public ValidationResult validate(String token) {
+    try {
+      Claims claims = validateAndExtract(token);
+      return new ValidationResult.Valid(claims);
+    } catch (ExpiredJwtException e) {
+      log.debug("JWT expired");
+      return new ValidationResult.Expired();
+    } catch (JwtException | IllegalArgumentException e) {
+      log.warn("JWT invalid: {}", e.getMessage());
+      return new ValidationResult.Invalid(e.getMessage());
     }
-
-    public String generateAccessToken(UUID userId, String email, String role) {
-        Instant now = clock.instant();
-        return Jwts.builder()
-                .subject(userId.toString())
-                .claim(CLAIM_EMAIL, email)
-                .claim(CLAIM_ROLE, role)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusMillis(accessTokenExpiry)))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String generateRefreshToken(UUID userId) {
-        Instant now = clock.instant();
-        return Jwts.builder()
-                .subject(userId.toString())
-                .claim(CLAIM_TYPE, TYPE_REFRESH)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusMillis(refreshTokenExpiry)))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public Claims validateAndExtract(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    public ValidationResult validate(String token) {
-        try {
-            validateAndExtract(token);
-            return ValidationResult.VALID;
-        } catch (ExpiredJwtException e) {
-            log.debug("JWT expired");
-            return ValidationResult.EXPIRED;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("JWT invalid: {}", e.getMessage());
-            return ValidationResult.INVALID;
-        }
-    }
-
-    public boolean isRefreshToken(Claims claims) {
-        return TYPE_REFRESH.equals(claims.get(CLAIM_TYPE, String.class));
-    }
-
-    public enum ValidationResult {
-        VALID,
-        EXPIRED,
-        INVALID
-    }
+  }
 }

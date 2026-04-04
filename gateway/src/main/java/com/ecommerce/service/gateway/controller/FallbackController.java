@@ -12,27 +12,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fallback")
 public class FallbackController {
 
-    @GetMapping("/product")
-    public ResponseEntity<Map<String, Object>> productFallback() {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(Map.of(
-                        "status",
-                        503,
-                        "message",
-                        "Product service is currently unavailable. Please try again later.",
-                        "timestamp",
-                        Instant.now().toString()));
-    }
+  @GetMapping("/product")
+  public ResponseEntity<Map<String, Object>> productFallback() {
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+        .body(
+            Map.of(
+                "status",
+                503,
+                "message",
+                "Product service is currently unavailable. Please try again later.",
+                "timestamp",
+                Instant.now().toString()));
+  }
 
-    @GetMapping("/order")
-    public ResponseEntity<Map<String, Object>> orderFallback() {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(Map.of(
-                        "status",
-                        503,
-                        "message",
-                        "Order service is currently unavailable.",
-                        "timestamp",
-                        Instant.now().toString()));
-    }
+  @GetMapping("/order")
+  public ResponseEntity<Map<String, Object>> orderFallback() {
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+        .body(
+            Map.of(
+                "status",
+                503,
+                "message",
+                "Order service is currently unavailable.",
+                "timestamp",
+                Instant.now().toString()));
+  }
 }
