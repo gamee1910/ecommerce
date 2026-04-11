@@ -87,20 +87,20 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
   # ─── Services ────────────────────────────────────
-  gateway:
-    build: ./gateway
-    container_name: ecom-gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      redis:
-        condition: service_healthy
-      user-service:
-        condition: service_started
-    environment:
-      REDIS_HOST: redis
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123}
-      JWT_SECRET: ${JWT_SECRET:-your-256-bit-secret-key-change-in-production-please}
+  #gateway:
+  #  build: ./gateway
+  #  container_name: ecom-gateway
+  #  ports:
+  #    - "8080:8080"
+  #  depends_on:
+   #   redis:
+    #    condition: service_healthy
+     # user-service:
+    #    condition: service_started
+   # environment:
+  #    REDIS_HOST: redis
+ #     REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123}
+#      JWT_SECRET: ${JWT_SECRET:-your-256-bit-secret-key-change-in-production-please}
 
   # user-service:
   #   build: ./user-service
