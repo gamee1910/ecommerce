@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.common.dto.request;
+package com.ecommerce.serivce.user.features.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

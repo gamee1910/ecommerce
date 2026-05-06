@@ -1,9 +1,9 @@
 package com.ecommerce.serivce.user.features.auth;
 
-import com.ecommerce.serivce.user.common.dto.request.AuthRequest;
-import com.ecommerce.serivce.user.common.dto.response.AuthResponse;
 import com.ecommerce.serivce.user.common.exception.UserServiceErrorCode;
 import com.ecommerce.serivce.user.common.exception.UserServiceException;
+import com.ecommerce.serivce.user.features.auth.dto.AuthRequest;
+import com.ecommerce.serivce.user.features.auth.dto.AuthResponse;
 import com.ecommerce.serivce.user.features.token.Token;
 import com.ecommerce.serivce.user.features.token.TokenRepository;
 import com.ecommerce.serivce.user.features.token.TokenService;
@@ -101,7 +101,9 @@ public class AuthService {
 
   @Transactional
   public void revokeRefreshToken(String rawToken) {
-    if (rawToken == null) return;
+    if (rawToken == null) {
+      return;
+    }
     tokenRepository
         .findByTokenHash(hash(rawToken))
         .ifPresentOrElse(

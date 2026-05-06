@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.common.dto.response;
+package com.ecommerce.serivce.user.features.user.dto;
 
 import com.ecommerce.serivce.user.features.user.User;
 import java.util.UUID;

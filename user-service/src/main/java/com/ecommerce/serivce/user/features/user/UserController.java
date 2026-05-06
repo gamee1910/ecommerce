@@ -1,7 +1,7 @@
 package com.ecommerce.serivce.user.features.user;
 
-import com.ecommerce.serivce.user.common.dto.request.UserRequest;
-import com.ecommerce.serivce.user.common.dto.response.UserResponse;
+import com.ecommerce.serivce.user.features.user.dto.UserRequest;
+import com.ecommerce.serivce.user.features.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
