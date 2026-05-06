@@ -1,14 +1,14 @@
 package com.ecommerce.service.product.features.categories;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-  Optional<Category> findBySlug(String slug);
 
-  List<Category> findByParentIdIsNull();
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.children WHERE c.parent IS NULL")
+    List<Category> findAllRootWithChildren();
 
-  List<Category> findByParentId(UUID parentId);
+    boolean existsBySlug(String slug);
 }

@@ -1,7 +1,6 @@
 package com.ecommerce.service.product.features.products;
 
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,23 +10,40 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-  String FIND_ALL_ACTIVE_QUERY =
-      "SELECT p FROM Product p JOIN FETCH p.category WHERE (:categoryId IS NULL OR p.category.id = :categoryId) AND p.isActive = true";
+    @Query("""
+      SELECT p FROM Product p
+      LEFT JOIN FETCH p.category c
+      WHERE (:isActive IS NULL    OR p.isActive = :isActive)
+        AND (:categoryId IS NULL  OR c.id = :categoryId)
+        AND (:minPrice IS NULL    OR p.price >= :minPrice)
+        AND (:maxPrice IS NULL    OR p.price <= :maxPrice)
+        AND (:keyword IS NULL
+             OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      """)
+    Page<Product> findWithFilters(
+            @Param("isActive") Boolean isActive,
+            @Param("categoryId") UUID categoryId,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 
-  String FULL_TEXT_SEARCH_QUERY =
-      """
-              SELECT * FROM products WHERE to_tsvector('english', name) @@ plainto_tsquery('english', :query)
-              AND is_active = true
-              ORDER BY ts_rank(to_tsvector('english', name), plainto_tsquery('english', :query)) DESC
-              LIMIT :limit OFFSET :offset
-              """;
+    @Query("""
+      SELECT COUNT(p) FROM Product p
+      LEFT JOIN p.category c
+      WHERE (:isActive IS NULL    OR p.isActive = :isActive)
+        AND (:categoryId IS NULL  OR c.id = :categoryId)
+        AND (:minPrice IS NULL    OR p.price >= :minPrice)
+        AND (:maxPrice IS NULL    OR p.price <= :maxPrice)
+        AND (:keyword IS NULL
+             OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      """)
+    long countWithFilters(
+            @Param("isActive") Boolean isActive,
+            @Param("categoryId") UUID categoryId,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("keyword") String keyword);
 
-  Optional<Product> findBySlugAndIsActive(String slug, Boolean isActive);
-
-  @Query(value = FULL_TEXT_SEARCH_QUERY, nativeQuery = true)
-  List<Product> fullTextSearch(
-      @Param("query") String query, @Param("limit") int limit, @Param("offset") int offset);
-
-  @Query(FIND_ALL_ACTIVE_QUERY)
-  Page<Product> findAllActive(@Param("categoryId") UUID categoryId, Pageable pageable);
+    boolean existsBySlug(String slug);
 }
