@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  @Cacheable(value = "users", key = "#userId")
   public UserResponse.UserProfile findByUserId(UUID userId) {
     return userRepository
         .findById(userId)
@@ -44,6 +47,7 @@ public class UserService {
         .orElseThrow(() -> new UserServiceException(UserServiceErrorCode.INVALID_CREDENTIALS));
   }
 
+  @CachePut(value = "users", key = "#userId")
   public UserResponse.UserProfile update(UUID userId, UserRequest.Update request) {
     Authentication auth = requireAuthentication();
 

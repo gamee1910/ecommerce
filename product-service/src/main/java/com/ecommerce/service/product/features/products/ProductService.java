@@ -176,4 +176,17 @@ public class ProductService {
     private String generateSlug(String name) {
         return name.toLowerCase().replaceAll("[^a-z0-9\\s-]", "").trim().replaceAll("\\s+", "-");
     }
+
+    @Transactional
+    public void deductStock(UUID id, int quantity) {
+        // TODO: Implement deduct stock logic
+        // 1. Fetch product
+        // 2. Check if stock >= quantity
+        // 3. Throw Exception if not enough stock
+        // 4. product.setStockQuantity(product.getStockQuantity() - quantity)
+        // 5. Save product
+        // 6. Evict cache L1 and L2
+        throw new UnsupportedOperationException("Deduct stock is not implemented yet");
+    }
 }
+

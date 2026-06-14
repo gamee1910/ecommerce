@@ -63,4 +63,11 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/deduct-stock")
+    public ResponseEntity<Void> deductStock(@PathVariable UUID id, @RequestParam int quantity) {
+        productService.deductStock(id, quantity);
+        return ResponseEntity.noContent().build();
+    }
 }
+
