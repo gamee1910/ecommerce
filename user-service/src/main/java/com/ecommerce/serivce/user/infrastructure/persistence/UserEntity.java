@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.features.user;
+package com.ecommerce.serivce.user.infrastructure.persistence;
 
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

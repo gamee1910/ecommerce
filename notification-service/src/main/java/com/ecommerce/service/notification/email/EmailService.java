@@ -24,9 +24,7 @@ public class EmailService {
     @Value("${app.notification.dry-run:true}")
     private boolean dryRun;
 
-    /**
-     * Sends a simple email. In dry-run mode, only logs the message.
-     */
+
     public void send(String toEmail, String subject, String body) {
         if (dryRun) {
             log.info(
@@ -51,9 +49,6 @@ public class EmailService {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Template builders
-    // ────────────────────────────────────────────────────────────────────────────
 
     public void sendWelcomeEmail(String toEmail) {
         String subject = "Chào mừng bạn đến với E-Commerce Platform!";

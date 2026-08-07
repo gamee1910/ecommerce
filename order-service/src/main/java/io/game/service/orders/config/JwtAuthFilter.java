@@ -14,10 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Reads user identity from headers forwarded by the API Gateway (X-User-Id, X-User-Role).
- * This approach trusts the gateway to have already validated the JWT.
- */
+
 @Component
 @RequiredArgsConstructor
 @Slf4j(topic = "JwtAuthFilter")

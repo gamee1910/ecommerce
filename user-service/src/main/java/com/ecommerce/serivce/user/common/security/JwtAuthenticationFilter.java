@@ -1,7 +1,7 @@
 package com.ecommerce.serivce.user.common.security;
 
-import com.ecommerce.serivce.user.features.token.TokenService;
-import com.ecommerce.serivce.user.features.token.TokenService.ValidationResult;
+import com.ecommerce.serivce.user.application.service.TokenService;
+import com.ecommerce.serivce.user.application.service.TokenService.ValidationResult;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

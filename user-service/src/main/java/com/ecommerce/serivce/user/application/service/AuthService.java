@@ -1,14 +1,13 @@
-package com.ecommerce.serivce.user.features.auth;
+package com.ecommerce.serivce.user.application.service;
 
 import com.ecommerce.serivce.user.common.exception.UserServiceErrorCode;
 import com.ecommerce.serivce.user.common.exception.UserServiceException;
-import com.ecommerce.serivce.user.features.auth.dto.AuthRequest;
-import com.ecommerce.serivce.user.features.auth.dto.AuthResponse;
-import com.ecommerce.serivce.user.features.token.Token;
-import com.ecommerce.serivce.user.features.token.TokenRepository;
-import com.ecommerce.serivce.user.features.token.TokenService;
-import com.ecommerce.serivce.user.features.user.User;
-import com.ecommerce.serivce.user.features.user.UserRepository;
+import com.ecommerce.serivce.user.application.dto.AuthRequest;
+import com.ecommerce.serivce.user.application.dto.AuthResponse;
+import com.ecommerce.serivce.user.domain.model.Token;
+import com.ecommerce.serivce.user.domain.repository.TokenRepository;
+import com.ecommerce.serivce.user.domain.model.User;
+import com.ecommerce.serivce.user.domain.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

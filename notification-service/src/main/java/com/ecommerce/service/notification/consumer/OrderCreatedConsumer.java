@@ -52,12 +52,10 @@ public class OrderCreatedConsumer {
             String orderId = payload.get("orderId").asText();
             String totalAmount = payload.get("totalAmount").asText();
 
-            // Attempt to get user email from payload (order-service should include it)
             String userEmail = null;
             if (payload.has("userEmail")) {
                 userEmail = payload.get("userEmail").asText();
             } else {
-                // Fallback: log warning — email not available, skip sending
                 log.warn("order.created payload missing userEmail for orderId={}, cannot send confirmation email", orderId);
                 ack.acknowledge();
                 return;
@@ -65,7 +63,6 @@ public class OrderCreatedConsumer {
 
             String subject = String.format("Xác nhận đơn hàng #%s thành công", orderId.substring(0, Math.min(8, orderId.length())));
 
-            // Build notification record
             Notification notification = Notification.builder()
                     .eventId(eventId)
                     .type(NotificationType.ORDER_CREATED)
@@ -76,7 +73,6 @@ public class OrderCreatedConsumer {
 
             notificationRepository.save(notification);
 
-            // Send email
             emailService.sendOrderConfirmationEmail(userEmail, orderId, totalAmount);
 
             notification.setStatus(NotificationStatus.SENT);

@@ -1,7 +1,9 @@
-package com.ecommerce.serivce.user.features.user;
+package com.ecommerce.serivce.user.application.service;
 
-import com.ecommerce.serivce.user.features.user.dto.UserRequest;
-import com.ecommerce.serivce.user.features.user.dto.UserResponse;
+import com.ecommerce.serivce.user.application.dto.UserRequest;
+import com.ecommerce.serivce.user.application.dto.UserResponse;
+import com.ecommerce.serivce.user.domain.model.User;
+import com.ecommerce.serivce.user.domain.repository.UserRepository;
 import com.ecommerce.serivce.user.common.exception.UserServiceErrorCode;
 import com.ecommerce.serivce.user.common.exception.UserServiceException;
 import java.util.UUID;

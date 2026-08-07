@@ -30,8 +30,7 @@ public class UserRegisteredConsumer {
     private final ObjectMapper objectMapper;
 
     @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000, multiplier = 2),
+        backoff = @Backoff(delay = 1000, multiplier = 2),
             dltTopicSuffix = ".DLT",
             autoCreateTopics = "false")
     @KafkaListener(topics = TOPIC, groupId = "notification-service")
@@ -40,7 +39,6 @@ public class UserRegisteredConsumer {
         String eventId = buildEventId(record);
         log.info("Received user.registered event — key={} partition={} offset={}", record.key(), record.partition(), record.offset());
 
-        // Idempotency check
         if (notificationRepository.existsByEventId(eventId)) {
             log.warn("Duplicate user.registered event detected, skipping. eventId={}", eventId);
             ack.acknowledge();
@@ -52,7 +50,6 @@ public class UserRegisteredConsumer {
             String email = payload.get("email").asText();
             String userId = payload.get("userId").asText();
 
-            // Build notification record
             Notification notification = Notification.builder()
                     .eventId(eventId)
                     .type(NotificationType.USER_REGISTERED)
@@ -63,7 +60,6 @@ public class UserRegisteredConsumer {
 
             notificationRepository.save(notification);
 
-            // Send email
             emailService.sendWelcomeEmail(email);
 
             notification.setStatus(NotificationStatus.SENT);

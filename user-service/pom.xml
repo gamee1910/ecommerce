@@ -101,6 +101,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+            <version>4.1.0</version>
         </dependency>
 
         <!-- Dev tools -->

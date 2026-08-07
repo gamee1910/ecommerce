@@ -1,6 +1,6 @@
-package com.ecommerce.serivce.user.features.user.dto;
+package com.ecommerce.serivce.user.application.dto;
 
-import com.ecommerce.serivce.user.features.user.User;
+import com.ecommerce.serivce.user.domain.model.User;
 import java.util.UUID;
 
 public class UserResponse {

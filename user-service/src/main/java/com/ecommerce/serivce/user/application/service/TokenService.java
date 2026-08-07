@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.features.token;
+package com.ecommerce.serivce.user.application.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

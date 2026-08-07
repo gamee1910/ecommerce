@@ -1,7 +1,5 @@
 package io.game.service.orders.outbox;
 
-import io.game.service.orders.common.exception.OrderErrorCode;
-import io.game.service.orders.common.exception.OrderServiceException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Outbox publisher: reads PENDING outbox events every 5 seconds and publishes them to Kafka.
- * Uses the Transactional Outbox Pattern to guarantee at-least-once delivery.
- */
+
 @Component
 @RequiredArgsConstructor
 @Slf4j(topic = "OutboxPublisher")

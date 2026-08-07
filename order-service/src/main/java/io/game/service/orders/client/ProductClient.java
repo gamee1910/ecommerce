@@ -1,9 +1,9 @@
 package io.game.service.orders.client;
 
+import io.game.service.orders.common.exception.OrderErrorCode;
+import io.game.service.orders.common.exception.OrderServiceException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import io.game.service.orders.common.exception.OrderServiceException;
-import io.game.service.orders.common.exception.OrderErrorCode;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +23,6 @@ public class ProductClient {
     @Value("${services.product.base-url}")
     private String productServiceUrl;
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // GET product info
-    // ────────────────────────────────────────────────────────────────────────────
-
     @CircuitBreaker(name = "productService", fallbackMethod = "fallbackGetProduct")
     @Retry(name = "productService", fallbackMethod = "fallbackGetProduct")
     @SuppressWarnings("unchecked")
@@ -41,10 +37,6 @@ public class ProductClient {
         throw new OrderServiceException(OrderErrorCode.PRODUCT_SERVICE_UNAVAILABLE);
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Deduct stock (called during order creation)
-    // ────────────────────────────────────────────────────────────────────────────
-
     @CircuitBreaker(name = "productService", fallbackMethod = "fallbackDeductStock")
     @Retry(name = "productService", fallbackMethod = "fallbackDeductStock")
     public void deductStock(UUID productId, int quantity) {
@@ -55,7 +47,6 @@ public class ProductClient {
                     null,
                     Void.class);
         } catch (HttpClientErrorException.Conflict e) {
-            // PRD_003 — Insufficient stock
             throw new OrderServiceException(OrderErrorCode.INSUFFICIENT_STOCK);
         }
     }
@@ -68,10 +59,6 @@ public class ProductClient {
         throw new OrderServiceException(OrderErrorCode.PRODUCT_SERVICE_UNAVAILABLE);
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Restore stock (called during order cancellation)
-    // ────────────────────────────────────────────────────────────────────────────
-
     @CircuitBreaker(name = "productService", fallbackMethod = "fallbackRestoreStock")
     @Retry(name = "productService", fallbackMethod = "fallbackRestoreStock")
     public void restoreStock(UUID productId, int quantity) {
@@ -83,7 +70,6 @@ public class ProductClient {
     }
 
     public void fallbackRestoreStock(UUID productId, int quantity, Throwable t) {
-        // Log and swallow — best-effort restore; manual reconciliation may be needed
         log.error(
                 "Fallback triggered for restoreStock product={} qty={}: {} — stock may need manual reconciliation",
                 productId, quantity, t.getMessage());

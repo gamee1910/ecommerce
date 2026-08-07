@@ -33,17 +33,12 @@ public class OrderService {
     private final ProductClient productClient;
     private final ObjectMapper objectMapper;
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Create Order
-    // ────────────────────────────────────────────────────────────────────────────
-
     @Transactional
     public OrderResponse.OrderDetails createOrder(OrderRequest.Create request) {
         UUID userId = getCurrentUserId();
         String userEmail = getCurrentUserEmail();
         log.info("Creating order for user={} with {} items", userId, request.items().size());
 
-        // 1. Validate each product & calculate total
         Order order = Order.builder()
                 .userId(userId)
                 .status(OrderStatus.PENDING)
@@ -56,7 +51,6 @@ public class OrderService {
         for (OrderRequest.OrderItemRequest itemReq : request.items()) {
             Map<String, Object> product = productClient.getProduct(itemReq.productId());
 
-            // Validate product is available
             if ("UNAVAILABLE".equals(product.get("status"))) {
                 throw new OrderServiceException(OrderErrorCode.PRODUCT_UNAVAILABLE);
             }
@@ -79,30 +73,22 @@ public class OrderService {
 
         order.setTotalAmount(totalAmount);
 
-        // 2. Save order (PENDING)
         Order savedOrder = orderRepository.save(order);
         log.info("Saved order id={} with status=PENDING", savedOrder.getId());
 
-        // 3. Deduct stock for each item
         for (OrderRequest.OrderItemRequest itemReq : request.items()) {
             productClient.deductStock(itemReq.productId(), itemReq.quantity());
         }
 
-        // 4. Transition to CONFIRMED
         savedOrder.setStatus(OrderStatus.CONFIRMED);
         orderRepository.save(savedOrder);
 
-        // 5. Save outbox event (same transaction — Transactional Outbox Pattern)
         OutboxEvent outboxEvent = buildOutboxEvent(savedOrder, userEmail);
         outboxRepository.save(outboxEvent);
         log.info("Saved outbox event for order id={}", savedOrder.getId());
 
         return toResponse(savedOrder);
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    // List my orders
-    // ────────────────────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<OrderResponse.OrderDetails> listMyOrders() {
@@ -111,10 +97,6 @@ public class OrderService {
                 .map(this::toResponse)
                 .toList();
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    // Get order details
-    // ────────────────────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public OrderResponse.OrderDetails getOrderDetails(UUID id) {
@@ -129,10 +111,6 @@ public class OrderService {
 
         return toResponse(order);
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    // Cancel order
-    // ────────────────────────────────────────────────────────────────────────────
 
     @Transactional
     public void cancelOrder(UUID id) {
@@ -149,7 +127,6 @@ public class OrderService {
             throw new OrderServiceException(OrderErrorCode.ORDER_CANNOT_BE_CANCELLED);
         }
 
-        // Best-effort restore stock for each item
         for (OrderItem item : order.getItems()) {
             productClient.restoreStock(item.getProductId(), item.getQuantity());
         }
@@ -158,10 +135,6 @@ public class OrderService {
         orderRepository.save(order);
         log.info("Order {} cancelled by user {}", id, userId);
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ────────────────────────────────────────────────────────────────────────────
 
     private UUID getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -176,14 +149,12 @@ public class OrderService {
         if (auth == null) {
             return null;
         }
-        // Credentials field is populated with userEmail by JwtAuthFilter
         Object credentials = auth.getCredentials();
         return credentials instanceof String ? (String) credentials : null;
     }
 
     private OutboxEvent buildOutboxEvent(Order order, String userEmail) {
         try {
-            // Build payload map
             List<Map<String, Object>> items = order.getItems().stream()
                     .map(i -> Map.<String, Object>of(
                             "productId", i.getProductId().toString(),

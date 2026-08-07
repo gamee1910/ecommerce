@@ -1,6 +1,6 @@
-package com.ecommerce.serivce.user.features.token;
+package com.ecommerce.serivce.user.infrastructure.persistence;
 
-import com.ecommerce.serivce.user.features.user.User;
+import com.ecommerce.serivce.user.infrastructure.persistence.UserEntity;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "oauth_tokens")
-public class Token {
+public class TokenEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,7 +22,7 @@ public class Token {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private UserEntity user;
 
   @Column(name = "token_hash", nullable = false, unique = true, length = 512)
   private String tokenHash;

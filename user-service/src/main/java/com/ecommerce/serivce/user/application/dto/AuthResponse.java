@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.features.auth.dto;
+package com.ecommerce.serivce.user.application.dto;
 
 public class AuthResponse {
   public record TokenPair(String accessToken, String refreshToken, long accesssTokenExpiresIn) {}

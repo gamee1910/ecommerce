@@ -17,7 +17,7 @@ public class CacheConfig {
   @Bean
   public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
     RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofMinutes(5)) // Product data cached for 5 minutes
+        .entryTtl(Duration.ofMinutes(5))
         .serializeKeysWith(
             RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(

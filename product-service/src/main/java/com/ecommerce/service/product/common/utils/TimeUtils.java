@@ -10,7 +10,6 @@ public final class TimeUtils {
 
     public static final ZoneId VN_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
 
-    // ── Formatters ────────────────────────────────────────────────────────────
 
     /** 2026-03-21 10:30:00 */
     public static final DateTimeFormatter DATE_TIME =

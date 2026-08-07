@@ -1,10 +1,11 @@
-package com.ecommerce.serivce.user.features.auth;
+package com.ecommerce.serivce.user.presentation.controller;
 
 import com.ecommerce.serivce.user.common.exception.UserServiceErrorCode;
 import com.ecommerce.serivce.user.common.exception.UserServiceException;
 import com.ecommerce.serivce.user.common.utils.CookieUtils;
-import com.ecommerce.serivce.user.features.auth.dto.AuthRequest;
-import com.ecommerce.serivce.user.features.auth.dto.AuthResponse;
+import com.ecommerce.serivce.user.application.dto.AuthRequest;
+import com.ecommerce.serivce.user.application.dto.AuthResponse;
+import com.ecommerce.serivce.user.application.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
