@@ -1,0 +1,10 @@
+com/ecommerce/service/notification/domain/NotificationType.class
+com/ecommerce/service/notification/domain/NotificationStatus.class
+com/ecommerce/service/notification/domain/Notification$NotificationBuilder.class
+com/ecommerce/service/notification/domain/NotificationRepository.class
+com/ecommerce/service/notification/email/EmailService.class
+com/ecommerce/service/notification/consumer/UserRegisteredConsumer.class
+com/ecommerce/service/notification/config/AppConfig.class
+com/ecommerce/service/notification/domain/Notification.class
+com/ecommerce/service/notification/NotificationServiceApplication.class
+com/ecommerce/service/notification/consumer/OrderCreatedConsumer.class

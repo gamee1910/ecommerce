@@ -15,13 +15,13 @@ public class OrderResponse {
             OrderStatus status,
             List<OrderItemDetails> items,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
-    ) {}
+            LocalDateTime updatedAt) {}
 
     public record OrderItemDetails(
             UUID id,
             UUID productId,
+            String productName,
             int quantity,
-            BigDecimal price
-    ) {}
+            BigDecimal unitPrice,
+            BigDecimal subtotal) {}
 }

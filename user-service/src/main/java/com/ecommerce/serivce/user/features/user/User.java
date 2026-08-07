@@ -1,4 +1,4 @@
-package com.ecommerce.serivce.user.features.user.model;
+package com.ecommerce.serivce.user.features.user;
 
 import jakarta.persistence.*;
 import java.time.Instant;

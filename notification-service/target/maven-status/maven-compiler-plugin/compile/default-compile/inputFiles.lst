@@ -1,0 +1,9 @@
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/NotificationServiceApplication.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/config/AppConfig.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/consumer/OrderCreatedConsumer.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/consumer/UserRegisteredConsumer.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/domain/Notification.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/domain/NotificationRepository.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/domain/NotificationStatus.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/domain/NotificationType.java
+/home/game/projects/java/ecommerce/notification-service/src/main/java/com/ecommerce/service/notification/email/EmailService.java

@@ -178,15 +178,45 @@ public class ProductService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                @CacheEvict(value = CacheConfig.CACHE_PRODUCT, key = "#id"),
+                @CacheEvict(value = CacheConfig.CACHE_PRODUCT_PAGE, allEntries = true)
+            })
     public void deductStock(UUID id, int quantity) {
-        // TODO: Implement deduct stock logic
-        // 1. Fetch product
-        // 2. Check if stock >= quantity
-        // 3. Throw Exception if not enough stock
-        // 4. product.setStockQuantity(product.getStockQuantity() - quantity)
-        // 5. Save product
-        // 6. Evict cache L1 and L2
-        throw new UnsupportedOperationException("Deduct stock is not implemented yet");
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new ProductServiceException(ProductServiceErrorCode.PRODUCT_NOT_FOUND));
+
+        if (product.getStockQuantity() < quantity) {
+            throw new ProductServiceException(ProductServiceErrorCode.INSUFFICIENT_STOCK);
+        }
+
+        product.setStockQuantity(product.getStockQuantity() - quantity);
+        productRepository.save(product);
+
+        evictProductL2(id);
+
+        log.info("Deducted {} units from product {} — remaining stock: {}", quantity, id, product.getStockQuantity());
+    }
+
+    @Transactional
+    @Caching(
+            evict = {
+                @CacheEvict(value = CacheConfig.CACHE_PRODUCT, key = "#id"),
+                @CacheEvict(value = CacheConfig.CACHE_PRODUCT_PAGE, allEntries = true)
+            })
+    public void restoreStock(UUID id, int quantity) {
+        Product product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new ProductServiceException(ProductServiceErrorCode.PRODUCT_NOT_FOUND));
+
+        product.setStockQuantity(product.getStockQuantity() + quantity);
+        productRepository.save(product);
+
+        evictProductL2(id);
+
+        log.info("Restored {} units to product {} — new stock: {}", quantity, id, product.getStockQuantity());
     }
 }
 

@@ -14,7 +14,8 @@ public enum ProductServiceErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CMN_999", "Internal server error"),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CTG_001", "Category not found"),
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRD_001", "Product not found"),
-    PRODUCT_SLUG_DUPLICATE(HttpStatus.CONFLICT, "PRD_002", "Slug duplicate");
+    PRODUCT_SLUG_DUPLICATE(HttpStatus.CONFLICT, "PRD_002", "Slug duplicate"),
+    INSUFFICIENT_STOCK(HttpStatus.CONFLICT, "PRD_003", "Insufficient stock quantity");
 
     private final HttpStatus httpStatus;
     private final String code;

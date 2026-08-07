@@ -38,6 +38,7 @@ public class OutboxEvent {
   private String payload;
 
   @Column(nullable = false, length = 20)
+  @Builder.Default
   private String status = "PENDING";
 
   @Column(nullable = false, updatable = false)

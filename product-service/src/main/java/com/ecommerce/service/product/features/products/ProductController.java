@@ -69,5 +69,11 @@ public class ProductController {
         productService.deductStock(id, quantity);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/restore-stock")
+    public ResponseEntity<Void> restoreStock(@PathVariable UUID id, @RequestParam int quantity) {
+        productService.restoreStock(id, quantity);
+        return ResponseEntity.noContent().build();
+    }
 }
 

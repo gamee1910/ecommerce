@@ -17,8 +17,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j(topic = "Auth Service")
 public class AuthService {
 
+  private static final String TOPIC_USER_REGISTERED = "user.registered";
+
   private final UserRepository userRepository;
   private final TokenService tokenService;
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   @Transactional
   public AuthResponse.TokenPair register(AuthRequest.Register request) {
@@ -48,6 +53,18 @@ public class AuthService {
                 .build());
 
     log.info("Registered new user: {}", user.getId());
+
+    // Publish user.registered event for notification-service
+    try {
+      kafkaTemplate.send(
+          TOPIC_USER_REGISTERED,
+          user.getId().toString(),
+          Map.of("userId", user.getId().toString(), "email", user.getEmail()));
+      log.info("Published user.registered event for userId={}", user.getId());
+    } catch (Exception e) {
+      log.error("Failed to publish user.registered event for userId={}: {}", user.getId(), e.getMessage());
+    }
+
     return issueTokenPair(user);
   }
 

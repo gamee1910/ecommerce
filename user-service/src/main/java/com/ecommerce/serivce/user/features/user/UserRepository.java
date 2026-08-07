@@ -1,6 +1,5 @@
-package com.ecommerce.serivce.user.features.user.repository;
+package com.ecommerce.serivce.user.features.user;
 
-import com.ecommerce.serivce.user.features.user.model.User;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
