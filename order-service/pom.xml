@@ -32,7 +32,7 @@
     <spring-cloud.version>2025.0.2</spring-cloud.version>
   </properties>
   <dependencies>
-    <!-- Web + Security + Validation -->
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -46,7 +46,12 @@
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
-    <!-- JPA + PostgreSQL + Flyway -->
+    <dependency>
+      <groupId>com.gamee1910</groupId>
+      <artifactId>error-lib</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -80,7 +85,6 @@
       <version>2.2.0</version>
     </dependency>
 
-    <!-- JJWT — giống User/Product Service -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
@@ -99,7 +103,6 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Lombok + Actuator -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

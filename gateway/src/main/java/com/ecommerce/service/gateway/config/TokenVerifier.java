@@ -11,13 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class TokenVerifier {
 
-  private final SecretKey secretKey;
+    private final SecretKey secretKey;
 
-  public TokenVerifier(@Value("${app.jwt.secret}") String secret) {
-    this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-  }
+    public TokenVerifier(@Value("${app.jwt.secret}") String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
-  public Claims validateAndExtract(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
-  }
+    public Claims validateAndExtract(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }

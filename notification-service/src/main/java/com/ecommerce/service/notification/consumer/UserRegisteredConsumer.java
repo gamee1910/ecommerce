@@ -1,10 +1,10 @@
 package com.ecommerce.service.notification.consumer;
 
-import com.ecommerce.service.notification.domain.Notification;
-import com.ecommerce.service.notification.domain.NotificationRepository;
-import com.ecommerce.service.notification.domain.NotificationStatus;
-import com.ecommerce.service.notification.domain.NotificationType;
-import com.ecommerce.service.notification.email.EmailService;
+import com.ecommerce.service.notification.model.Notification;
+import com.ecommerce.service.notification.model.NotificationStatus;
+import com.ecommerce.service.notification.model.NotificationType;
+import com.ecommerce.service.notification.repository.NotificationRepository;
+import com.ecommerce.service.notification.service.EmailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
@@ -30,14 +30,18 @@ public class UserRegisteredConsumer {
     private final ObjectMapper objectMapper;
 
     @RetryableTopic(
-        backoff = @Backoff(delay = 1000, multiplier = 2),
+            backoff = @Backoff(delay = 1000, multiplier = 2),
             dltTopicSuffix = ".DLT",
             autoCreateTopics = "false")
     @KafkaListener(topics = TOPIC, groupId = "notification-service")
     @Transactional
     public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
         String eventId = buildEventId(record);
-        log.info("Received user.registered event — key={} partition={} offset={}", record.key(), record.partition(), record.offset());
+        log.info(
+                "Received user.registered event — key={} partition={} offset={}",
+                record.key(),
+                record.partition(),
+                record.offset());
 
         if (notificationRepository.existsByEventId(eventId)) {
             log.warn("Duplicate user.registered event detected, skipping. eventId={}", eventId);

@@ -1,10 +1,10 @@
 package com.ecommerce.service.notification.consumer;
 
-import com.ecommerce.service.notification.domain.Notification;
-import com.ecommerce.service.notification.domain.NotificationRepository;
-import com.ecommerce.service.notification.domain.NotificationStatus;
-import com.ecommerce.service.notification.domain.NotificationType;
-import com.ecommerce.service.notification.email.EmailService;
+import com.ecommerce.service.notification.model.Notification;
+import com.ecommerce.service.notification.model.NotificationStatus;
+import com.ecommerce.service.notification.model.NotificationType;
+import com.ecommerce.service.notification.repository.NotificationRepository;
+import com.ecommerce.service.notification.service.EmailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
@@ -30,7 +30,6 @@ public class OrderCreatedConsumer {
     private final ObjectMapper objectMapper;
 
     @RetryableTopic(
-            attempts = "3",
             backoff = @Backoff(delay = 1000, multiplier = 2),
             dltTopicSuffix = ".DLT",
             autoCreateTopics = "false")
@@ -38,7 +37,11 @@ public class OrderCreatedConsumer {
     @Transactional
     public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
         String eventId = buildEventId(record);
-        log.info("Received order.created event — key={} partition={} offset={}", record.key(), record.partition(), record.offset());
+        log.info(
+                "Received order.created event — key={} partition={} offset={}",
+                record.key(),
+                record.partition(),
+                record.offset());
 
         // Idempotency check
         if (notificationRepository.existsByEventId(eventId)) {
@@ -52,16 +55,19 @@ public class OrderCreatedConsumer {
             String orderId = payload.get("orderId").asText();
             String totalAmount = payload.get("totalAmount").asText();
 
-            String userEmail = null;
+            String userEmail;
             if (payload.has("userEmail")) {
                 userEmail = payload.get("userEmail").asText();
             } else {
-                log.warn("order.created payload missing userEmail for orderId={}, cannot send confirmation email", orderId);
+                log.warn(
+                        "order.created payload missing userEmail for orderId={}, cannot send confirmation email",
+                        orderId);
                 ack.acknowledge();
                 return;
             }
 
-            String subject = String.format("Xác nhận đơn hàng #%s thành công", orderId.substring(0, Math.min(8, orderId.length())));
+            String subject = String.format(
+                    "Xác nhận đơn hàng #%s thành công", orderId.substring(0, Math.min(8, orderId.length())));
 
             Notification notification = Notification.builder()
                     .eventId(eventId)
